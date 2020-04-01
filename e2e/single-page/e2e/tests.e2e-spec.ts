@@ -3,13 +3,30 @@ import {
     createDriver,
     nsCapabilities,
 } from "nativescript-dev-appium";
+import { isSauceLab } from "nativescript-dev-appium/lib/parser";
+import { ImageOptions } from "nativescript-dev-appium/lib/image-options";
+
+const QUEUE_WAIT_TIME: number = 600000; // Sometimes SauceLabs threads are not available and the tests wait in a queue to start. Wait 10 min before timeout.
 
 describe("Single page app", async function () {
     let driver: AppiumDriver;
 
     before(async function () {
+        this.timeout(QUEUE_WAIT_TIME);
         nsCapabilities.testReporter.context = this;
         driver = await createDriver();
+        driver.imageHelper.defaultTolerance = 50;
+        driver.imageHelper.defaultToleranceType = ImageOptions.pixel;
+    });
+
+    after(async function () {
+        if (isSauceLab) {
+            driver.sessionId().then(function (sessionId) {
+                console.log("Report https://saucelabs.com/beta/tests/" + sessionId);
+            });
+        }
+        await driver.quit();
+        console.log("Quit driver!");
     });
 
     afterEach(async function () {

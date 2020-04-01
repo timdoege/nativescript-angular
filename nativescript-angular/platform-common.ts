@@ -6,6 +6,7 @@ import "./zone-js/dist/zone-nativescript";
 import "./polyfills/array";
 import "./polyfills/console";
 import { profile, uptime } from "tns-core-modules/profiling";
+import { getRootView } from "tns-core-modules/application";
 import "./dom-adapter";
 
 import {
@@ -153,6 +154,11 @@ export class NativeScriptPlatformRef extends PlatformRef {
     private bootstrapApp() {
         (<any>global).__onLiveSyncCore = () => {
             if (this.appOptions.hmrOptions) {
+                const rootView = getRootView();
+                if (rootView) {
+                    rootView._closeAllModalViewsInternal();
+                }
+
                 this.appOptions.hmrOptions.livesyncCallback(() => this._livesync());
             } else {
                 this._livesync();
@@ -185,18 +191,7 @@ export class NativeScriptPlatformRef extends PlatformRef {
     @profile
     private bootstrapNativeScriptApp() {
         const autoCreateFrame = !!this.appOptions.createFrameOnBootstrap;
-        let tempAppHostView: AppHostView;
         let rootContent: View;
-
-        if (autoCreateFrame) {
-            const { page, frame } = this.createFrameAndPage(false);
-            setRootPage(page);
-            rootContent = frame;
-        } else {
-            // Create a temp page for root of the renderer
-            tempAppHostView = new AppHostView();
-            setRootPage(<any>tempAppHostView);
-        }
 
         if (isLogEnabled()) {
             bootstrapLog("NativeScriptPlatform bootstrap started.");
@@ -206,6 +201,17 @@ export class NativeScriptPlatformRef extends PlatformRef {
             (args: LaunchEventData) => {
                 if (isLogEnabled()) {
                     bootstrapLog("Application launch event fired");
+                }
+
+                let tempAppHostView: AppHostView;
+                if (autoCreateFrame) {
+                    const { page, frame } = this.createFrameAndPage(false);
+                    setRootPage(page);
+                    rootContent = frame;
+                } else {
+                    // Create a temp page for root of the renderer
+                    tempAppHostView = new AppHostView();
+                    setRootPage(<any>tempAppHostView);
                 }
 
                 let bootstrapPromiseCompleted = false;

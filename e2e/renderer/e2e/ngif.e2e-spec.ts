@@ -9,24 +9,42 @@ import {
 import { isAbove } from "./helpers/location";
 
 import { assert } from "chai";
+import { isSauceLab } from "nativescript-dev-appium/lib/parser";
+import { ImageOptions } from "nativescript-dev-appium/lib/image-options";
+
+const QUEUE_WAIT_TIME: number = 600000; // Sometimes SauceLabs threads are not available and the tests wait in a queue to start. Wait 10 min before timeout.
+
 
 describe("ngIf scenario", async function () {
     let driver: AppiumDriver;
     let toggleButton: UIElement;
 
+    before(async function () {
+        this.timeout(QUEUE_WAIT_TIME);
+        nsCapabilities.testReporter.context = this;
+        driver = await createDriver();
+        driver.imageHelper.defaultTolerance = 50;
+        driver.imageHelper.defaultToleranceType = ImageOptions.pixel;
+        await driver.driver.resetApp();
+    });
+
+    after(async function () {
+        if (isSauceLab) {
+            driver.sessionId().then(function (sessionId) {
+                console.log("Report https://saucelabs.com/beta/tests/" + sessionId);
+            });
+        }
+        await driver.quit();
+        console.log("Quit driver!");
+    });
+
+    afterEach(async function () {
+        if (this.currentTest.state === "failed") {
+            await driver.logTestArtifacts(this.currentTest.title);
+        }
+    });
+
     describe("without layout", async function () {
-        before(async function () {
-            nsCapabilities.testReporter.context = this;
-            driver = await createDriver();
-            await driver.driver.resetApp();
-        });
-
-        afterEach(async function () {
-            if (this.currentTest.state === "failed") {
-                await driver.logTestArtifacts(this.currentTest.title);
-            }
-        });
-
         it("should navigate to page", async function () {
             const navigationButton =
                 await driver.findElementByAutomationText("NgIf no layout");
@@ -56,14 +74,7 @@ describe("ngIf scenario", async function () {
 
         before(async function () {
             nsCapabilities.testReporter.context = this;
-            driver = await createDriver();
             await driver.driver.resetApp();
-        });
-
-        afterEach(async function () {
-            if (this.currentTest.state === "failed") {
-                await driver.logTestArtifacts(this.currentTest.title);
-            }
         });
 
         it("should navigate to page", async function () {
@@ -105,14 +116,7 @@ describe("ngIf scenario", async function () {
 
         before(async function () {
             nsCapabilities.testReporter.context = this;
-            driver = await createDriver();
             await driver.driver.resetApp();
-        });
-
-        afterEach(async function () {
-            if (this.currentTest.state === "failed") {
-                await driver.logTestArtifacts(this.currentTest.title);
-            }
         });
 
         it("should navigate to page", async function () {
@@ -167,14 +171,7 @@ describe("ngIf scenario", async function () {
 
         before(async function () {
             nsCapabilities.testReporter.context = this;
-            driver = await createDriver();
             await driver.driver.resetApp();
-        });
-
-        afterEach(async function () {
-            if (this.currentTest.state === "failed") {
-                await driver.logTestArtifacts(this.currentTest.title);
-            }
         });
 
         it("should navigate to page", async function () {
@@ -229,14 +226,7 @@ describe("ngIf scenario", async function () {
 
         before(async function () {
             nsCapabilities.testReporter.context = this;
-            driver = await createDriver();
             await driver.driver.resetApp();
-        });
-
-        afterEach(async function () {
-            if (this.currentTest.state === "failed") {
-                await driver.logTestArtifacts(this.currentTest.title);
-            }
         });
 
         it("should navigate to page", async function () {
@@ -292,14 +282,7 @@ describe("ngIf scenario", async function () {
 
         before(async function () {
             nsCapabilities.testReporter.context = this;
-            driver = await createDriver();
             await driver.driver.resetApp();
-        });
-
-        afterEach(async function () {
-            if (this.currentTest.state === "failed") {
-                await driver.logTestArtifacts(this.currentTest.title);
-            }
         });
 
         it("should navigate to page", async function () {

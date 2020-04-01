@@ -2,22 +2,33 @@ import { AppiumDriver, createDriver, nsCapabilities } from "nativescript-dev-app
 import { Screen } from "./screen"
 import {
     testPlayerNavigated,
-    testTeamNavigated,
-    testPlayerNextNavigated,
-    testTeamNextNavigated,
-} from "./shared.e2e-spec"
+    testTeamNavigated
+} from "./shared.e2e-spec";
+import { isSauceLab } from "nativescript-dev-appium/lib/parser";
+import { ImageOptions } from "nativescript-dev-appium/lib/image-options";
+
+const QUEUE_WAIT_TIME: number = 600000; // Sometimes SauceLabs threads are not available and the tests wait in a queue to start. Wait 10 min before timeout.
+const isSauceRun = isSauceLab;
 
 describe("custom-tabs:", async function () {
     let driver: AppiumDriver;
     let screen: Screen;
 
     before(async function () {
+        this.timeout(QUEUE_WAIT_TIME);
         nsCapabilities.testReporter.context = this;
         driver = await createDriver();
+        driver.imageHelper.defaultTolerance = 50;
+        driver.imageHelper.defaultToleranceType = ImageOptions.pixel;
         screen = new Screen(driver);
     });
 
     after(async function () {
+        if (isSauceRun) {
+            driver.sessionId().then(function (sessionId) {
+                console.log("Report https://saucelabs.com/beta/tests/" + sessionId);
+            });
+        }
         await driver.quit();
         console.log("Quit driver!");
     });
@@ -46,7 +57,7 @@ describe("custom-tabs:", async function () {
         await screen.loadedTeamList();
     });
 
-    it("navigate back to login and again to custom tabs", async function () {
+    it("navigate to custom tabs player and team details", async function () {
         await gotoPlayersTab(driver);
         await testPlayerNavigated(screen, screen.playerOne);
         await gotoTeamsTab(driver);

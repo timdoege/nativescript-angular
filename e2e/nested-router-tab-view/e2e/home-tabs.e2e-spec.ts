@@ -3,12 +3,13 @@ import { Screen } from "./screen"
 import {
     testPlayerNavigated,
     testTeamNavigated,
-    testPlayerNextNavigated,
-    testTeamNextNavigated,
-    testPlayersNavigated,
-    canGoBack,
-    testTeamsNavigated
-} from "./shared.e2e-spec"
+    testPlayerNextNavigated
+} from "./shared.e2e-spec";
+import { isSauceLab } from "nativescript-dev-appium/lib/parser";
+import { ImageOptions } from "nativescript-dev-appium/lib/image-options";
+
+const QUEUE_WAIT_TIME: number = 600000; // Sometimes SauceLabs threads are not available and the tests wait in a queue to start. Wait 10 min before timeout.
+const isSauceRun = isSauceLab;
 
 const pages = ["Go To Home Page", "Go To Lazy Home Page"];
 
@@ -17,12 +18,20 @@ describe("home-tabs:", async function () {
     let screen: Screen;
 
     before(async function () {
+        this.timeout(QUEUE_WAIT_TIME);
         nsCapabilities.testReporter.context = this;
         driver = await createDriver();
+        driver.imageHelper.defaultTolerance = 50;
+        driver.imageHelper.defaultToleranceType = ImageOptions.pixel;
         screen = new Screen(driver);
     });
 
     after(async function () {
+        if (isSauceRun) {
+            driver.sessionId().then(function (sessionId) {
+                console.log("Report https://saucelabs.com/beta/tests/" + sessionId);
+            });
+        }
         await driver.quit();
         console.log("Quit driver!");
     });
@@ -52,22 +61,27 @@ describe("home-tabs:", async function () {
                 await screen.navigateToTabsPage();
                 await screen.loadedTabs();
                 await screen.loadedPlayersList();
-                await screen.navigateToAboutPage();
-                await screen.loadedAbout();
-                await screen.loadedNestedAbout();
+
+                // TO DO: This is related to the tns-core-modules animations overhaul intiative (removing Animators in favor of androidx Transitions)
+                // Angular test case: navigating from Page with 3 nested frames and back crashes with "IllegalArgumentException: parameter must be a descendant of this view" only from these commented appium tests (does not reproduce with manual testing). This is fixed in androidx.fragment:fragment:1.2.0 and tests must be uncommented when migrating to it.
+                // await screen.navigateToAboutPage();
+                // await screen.loadedAbout();
+                // await screen.loadedNestedAbout();
             });
 
             it("should go back to Tabs and then back to Home", async function () {
-                await backActivatedRoute(driver);
-                await screen.loadedTabs();
-                await screen.loadedPlayersList();
+                // TO DO: This is related to the tns-core-modules animations overhaul intiative (removing Animators in favor of androidx Transitions)
+                // Angular test case: navigating from Page with 3 nested frames and back crashes with "IllegalArgumentException: parameter must be a descendant of this view" only from these commented appium tests (does not reproduce with manual testing). This is fixed in androidx.fragment:fragment:1.2.0 and tests must be uncommented when migrating to it.
+                // await backActivatedRoute(driver);
+                // await screen.loadedTabs();
+                // await screen.loadedPlayersList();
                 await backActivatedRoute(driver);
                 await screen.loadedHome();
                 await screen.loadedPlayersList();
                 await screen.loadedTeamList();
             });
 
-            it("should navigate to Tabs without Players/Teams navigation", async function () {
+            it("should navigate to Tabs without Players\\Teams navigation", async function () {
                 await screen.navigateToTabsPage();
                 await screen.loadedTabs();
                 await screen.loadedPlayersList();
@@ -77,7 +91,7 @@ describe("home-tabs:", async function () {
                 await screen.loadedTeamList();
             });
 
-            it("should navigate Player One/Team One then go to Tabs and back", async function () {
+            it("should navigate Player One\\Team One then go to Tabs and back", async function () {
                 await testPlayerNavigated(screen, screen.playerOne);
                 await testTeamNavigated(screen, screen.teamOne);
                 await screen.navigateToTabsPage();

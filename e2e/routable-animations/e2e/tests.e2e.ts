@@ -1,15 +1,28 @@
-import { AppiumDriver, createDriver, SearchOptions } from "nativescript-dev-appium";
+import { AppiumDriver, createDriver, SearchOptions, nsCapabilities } from "nativescript-dev-appium";
 import { assert } from "chai";
+import { isSauceLab } from "nativescript-dev-appium/lib/parser";
+import { ImageOptions } from "nativescript-dev-appium/lib/image-options";
 
-describe("sample scenario", () => {
+const QUEUE_WAIT_TIME: number = 600000; // Sometimes SauceLabs threads are not available and the tests wait in a queue to start. Wait 10 min before timeout.
+
+describe("sample scenario", function () {
     const defaultWaitTime = 5000;
     let driver: AppiumDriver;
 
     before(async function () {
+        this.timeout(QUEUE_WAIT_TIME);
+        nsCapabilities.testReporter.context = this;
         driver = await createDriver();
+        driver.imageHelper.defaultTolerance = 50;
+        driver.imageHelper.defaultToleranceType = ImageOptions.pixel;
     });
 
     after(async function () {
+        if (isSauceLab) {
+            driver.sessionId().then(function (sessionId) {
+                console.log("Report https://saucelabs.com/beta/tests/" + sessionId);
+            });
+        }
         await driver.quit();
         console.log("Quit driver!");
     });
@@ -22,7 +35,7 @@ describe("sample scenario", () => {
 
     it("should go to support page", async function () {
         const btnGoToSupportPage = await driver.findElementByAutomationText("go to support page");
-        const homeImage = await driver.compareScreen("home");
+        const homeImage = await driver.compareScreen("home", 5, 20, ImageOptions.pixel);
         assert.isTrue(homeImage);
         await btnGoToSupportPage.click();
         const titleSupportPage = await driver.findElementByAutomationText("Support Page");
@@ -31,7 +44,7 @@ describe("sample scenario", () => {
 
     it("should go back to home page", async function () {
         const btnGoBackToHomePage = await driver.findElementByAutomationText("go back to home page");
-        const supportImage = await driver.compareScreen("support");
+        const supportImage = await driver.compareScreen("support", 5, 20, ImageOptions.pixel);
         assert.isTrue(supportImage);
         await btnGoBackToHomePage.click();
         const titleHomePage = await driver.findElementByAutomationText("Home Page");

@@ -1,3 +1,85 @@
+<a name="8.20.4"></a>
+## [8.20.4](https://github.com/NativeScript/nativescript-angular/compare/8.20.3...8.20.4) (2020-01-07)
+
+
+### Bug Fixes
+
+* add context to frame navigation ([#2100](https://github.com/NativeScript/nativescript-angular/pull/2100))
+* wrong import path in compat package ([#2097](https://github.com/NativeScript/nativescript-angular/pull/2097))
+
+
+
+<a name="8.20.3"></a>
+## [8.20.3](https://github.com/NativeScript/nativescript-angular/compare/8.20.2...8.20.3) (2019-11-13)
+
+
+### Bug Fixes
+
+* add exports for backwards compatibility ([fbd46c1](https://github.com/NativeScript/nativescript-angular/commit/fbd46c1))
+
+<a name="8.20.2"></a>
+## [8.20.2](https://github.com/NativeScript/nativescript-angular/compare/8.20.1...8.20.2) (2019-11-12)
+
+
+### Bug Fixes
+
+* add exports in `nativescript-angular` package for backwards compatibility ([4a5d022](https://github.com/NativeScript/nativescript-angular/commit/4a5d022))
+
+
+<a name="8.20.1"></a>
+# [8.20.1](https://github.com/NativeScript/nativescript-angular/compare/8.20.0...8.20.1) (2019-11-07)
+
+### Bug Fixes
+
+* add exports in `nativescript-angular` package for backwards compatibility 
+<a name="8.20.0"></a>
+# [8.20.0](https://github.com/NativeScript/nativescript-angular/compare/8.2.2...8.20.0) (2019-10-23)
+
+### Features
+* add scoped package @nativescript/angular ([#2014](https://github.com/NativeScript/nativescript-angular/pull/2014))
+
+### Bug Fixes
+
+* **animations:** resolve issue with "query animations" on iOS 13 ([#2022](https://github.com/NativeScript/nativescript-angular/issues/2022)) ([c382682](https://github.com/NativeScript/nativescript-angular/commit/c382682))
+
+<a name="8.2.2"></a>
+## [8.2.2](https://github.com/NativeScript/nativescript-angular/compare/8.2.1...8.2.2) (2019-10-16)
+
+### Features
+
+* Support for adding scoped CSS without triggering global refresh ([#1999](https://github.com/NativeScript/nativescript-angular/pull/1999)) ([662c122](https://github.com/NativeScript/nativescript-angular/commit/662c122))
+
+
+
+<a name="8.2.1"></a>
+## [8.2.1](https://github.com/NativeScript/nativescript-angular/compare/8.2.0...8.2.1) (2019-08-28)
+
+
+### Bug Fixes
+
+* **hmr:** close modal views during livesync [#7669](https://github.com/NativeScript/nativescript-angular/issues/7669) ([#1944](https://github.com/NativeScript/nativescript-angular/issues/1944)) ([73d83ed](https://github.com/NativeScript/nativescript-angular/commit/73d83ed))
+
+
+
+<a name="8.2.0"></a>
+# [8.2.0](https://github.com/NativeScript/nativescript-angular/compare/8.1.0...8.2.0) (2019-08-13)
+
+
+### Features
+
+* Update to Angular 8.2.x ([dbe983b](https://github.com/NativeScript/nativescript-angular/commit/dbe983b))
+* Remove `@angular/http` from the dependecies ([#1842](https://github.com/NativeScript/nativescript-angular/issues/1842)) ([c6af21d](https://github.com/NativeScript/nativescript-angular/commit/c6af21d))
+
+### BREAKING CHANGES:
+
+* The `NativeScriptHttpModule` is removed
+* `@angular/http` is removed from the dependencies
+
+Migration steps:
+* If using `NativeScriptHttpModule`, replace with `NativeScriptHttpClientModule` as done [here](https://github.com/NativeScript/nativescript-sdk-examples-ng/commit/16d3caee2b0ee2d88d328b75bde49eea6c96920a)
+* as `@angular/http` is no longer a peerDependency of `nativescript-angular`, you can remove if from your dependencies
+
+
 <a name="8.1.0"></a>
 # [8.1.0](https://github.com/NativeScript/nativescript-angular/compare/8.0.3...8.1.0) (2019-07-31)
 

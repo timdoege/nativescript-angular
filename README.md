@@ -8,11 +8,12 @@ This repository contains the code for integration of NativeScript with Angular.
 
 <!-- TOC depthFrom:2 -->
 
-- [Watch the video explaining Angular and NativeScript](#watch-the-video-explaining-angular-and-nativescript)
-- [Explore the examples](#explore-the-examples)
-- [Contribute](#contribute)
-- [Known issues](#known-issues)
-- [Get Help](#get-help)
+- [NativeScript Angular](#nativescript-angular)
+  - [Watch the video explaining Angular and NativeScript](#watch-the-video-explaining-angular-and-nativescript)
+  - [Explore the examples](#explore-the-examples)
+  - [Contribute](#contribute)
+  - [Known issues](#known-issues)
+  - [Get Help](#get-help)
 
 <!-- /TOC -->
 
@@ -22,12 +23,12 @@ This repository contains the code for integration of NativeScript with Angular.
 
 ## Explore the examples
 
-The `ng-sample` app is meant for testing stuff while developing the renderer code, and isn't the best example out there. You can take a look at these sample apps that use the published builds from npm:
+The `e2e` apps are meant for testing stuff. You can take a look at these additional sample apps that use the published builds from npm:
 
-* [Hello world starter](https://github.com/NativeScript/template-hello-world-ng)
-* [Master-detail template](https://github.com/NativeScript/template-master-detail-ng)
-* [Drawer navigation template](https://github.com/NativeScript/template-drawer-navigation-ng)
-* [TabView navigation template](https://github.com/NativeScript/template-tab-navigation-ng)
+* [Hello world starter](https://github.com/NativeScript/nativescript-app-templates/tree/master/packages/template-hello-world-ng)
+* [Master-detail template](https://github.com/NativeScript/nativescript-app-templates/tree/master/packages/template-master-detail-ng)
+* [Drawer navigation template](https://github.com/NativeScript/nativescript-app-templates/tree/master/packages/template-drawer-navigation-ng)
+* [TabView navigation template](https://github.com/NativeScript/nativescript-app-templates/tree/master/packages/template-tab-navigation-ng)
 * [NativeScript Angular SDK examples](https://github.com/NativeScript/nativescript-sdk-examples-ng)
 
 ## Contribute

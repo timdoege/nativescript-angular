@@ -7,6 +7,10 @@ import {
 } from "nativescript-dev-appium";
 
 import { isAbove } from "./helpers/location";
+import { isSauceLab } from "nativescript-dev-appium/lib/parser";
+import { ImageOptions } from "nativescript-dev-appium/lib/image-options";
+
+const QUEUE_WAIT_TIME: number = 600000; // Sometimes SauceLabs threads are not available and the tests wait in a queue to start. Wait 10 min before timeout.
 
 interface ElementTuple {
     label: UIElement,
@@ -22,9 +26,22 @@ describe("ngForOf scenario", function () {
     let lastAddedElementId = 0;
 
     before(async function () {
+        this.timeout(QUEUE_WAIT_TIME);
         nsCapabilities.testReporter.context = this;
         driver = await createDriver();
+        driver.imageHelper.defaultTolerance = 50;
+        driver.imageHelper.defaultToleranceType = ImageOptions.pixel;
         await driver.driver.resetApp();
+    });
+
+    after(async function () {
+        if (isSauceLab) {
+            driver.sessionId().then(function (sessionId) {
+                console.log("Report https://saucelabs.com/beta/tests/" + sessionId);
+            });
+        }
+        await driver.quit();
+        console.log("Quit driver!");
     });
 
     afterEach(async function () {
@@ -75,7 +92,7 @@ describe("ngForOf scenario", function () {
     });
 
     it("should render new elements correctly after all old ones are removed", async function () {
-        for (let i = 0; i < 5; i += 1) {
+        for (let i = 0; i < 3; i += 1) {
             await addElement();
             await checkCorrectOrderAll();
         }

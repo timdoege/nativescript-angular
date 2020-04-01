@@ -1,5 +1,5 @@
 import { AppiumDriver, createDriver, nsCapabilities } from "nativescript-dev-appium";
-import { Screen } from "./screens/screen"
+import { Screen } from "./screens/screen";
 import {
     roots,
     modalFrameBackground,
@@ -8,7 +8,12 @@ import {
     testNestedModalFrameBackground,
     testNestedModalPageBackground,
     testDialogBackground
-} from "./screens/shared-screen"
+} from "./screens/shared-screen";
+import { isSauceLab } from "nativescript-dev-appium/lib/parser";
+import { ImageOptions } from "nativescript-dev-appium/lib/image-options";
+
+const QUEUE_WAIT_TIME: number = 600000; // Sometimes SauceLabs threads are not available and the tests wait in a queue to start. Wait 10 min before timeout.
+const isSauceRun = isSauceLab;
 
 describe("modal-frame:", async function () {
 
@@ -16,9 +21,22 @@ describe("modal-frame:", async function () {
     let screen: Screen;
 
     before(async function () {
+        this.timeout(QUEUE_WAIT_TIME);
         nsCapabilities.testReporter.context = this;
         driver = await createDriver();
+        driver.imageHelper.defaultTolerance = 50;
+        driver.imageHelper.defaultToleranceType = ImageOptions.pixel;
         screen = new Screen(driver);
+    });
+
+    after(async function () {
+        if (isSauceRun) {
+            driver.sessionId().then(function (sessionId) {
+                console.log("Report https://saucelabs.com/beta/tests/" + sessionId);
+            });
+        }
+        await driver.quit();
+        console.log("Quit driver!");
     });
 
     for (let index = 0; index < roots.length; index++) {
@@ -28,9 +46,6 @@ describe("modal-frame:", async function () {
             before(async function () {
                 nsCapabilities.testReporter.context = this;
                 await screen[root]();
-            });
-
-            beforeEach(async function () {
             });
 
             afterEach(async function () {

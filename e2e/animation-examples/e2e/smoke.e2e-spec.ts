@@ -9,13 +9,31 @@ import { AnimationWithOptionsPage } from "./pages/animation-with-options-page";
 import { AnimationsWithDefaultOptionsPage } from "./pages/animations-with-default-options-page";
 import { AnimateChildPage } from "./pages/animate-child-page";
 import { HeroPage } from "./pages/hero-page";
+import { isSauceLab } from "nativescript-dev-appium/lib/parser";
+import { ImageOptions } from "nativescript-dev-appium/lib/image-options";
+
+const QUEUE_WAIT_TIME: number = 600000; // Sometimes SauceLabs threads are not available and the tests wait in a queue to start. Wait 10 min before timeout.
+const isSauceRun = isSauceLab;
 
 describe("smoke-tests", async function () {
     let driver: AppiumDriver;
 
     before(async function () {
+        this.timeout(QUEUE_WAIT_TIME);
         nsCapabilities.testReporter.context = this;
         driver = await createDriver();
+        driver.imageHelper.defaultTolerance = 50;
+        driver.imageHelper.defaultToleranceType = ImageOptions.pixel;
+    });
+
+    after(async function () {
+        if (isSauceRun) {
+            driver.sessionId().then(function (sessionId) {
+                console.log("Report https://saucelabs.com/beta/tests/" + sessionId);
+            });
+        }
+        await driver.quit();
+        console.log("Quit driver!");
     });
 
     afterEach(async function () {
@@ -87,7 +105,7 @@ describe("smoke-tests", async function () {
         await animationWithOptionsPage.enterExample();
         await animationWithOptionsPage.toggleAnimation();
         const result = await animationWithOptionsPage.waitElementToHide();
-        assert.isFalse(result.isVisible, "The button should disappear!");
+        assert.isUndefined(result, "The button should disappear!");
 
         await animationWithOptionsPage.assertPositionOfToggleAnimationBtn();
     });
@@ -130,16 +148,16 @@ describe("smoke-tests", async function () {
         const heroPage = new HeroPage(driver);
         await heroPage.enterExample();
         await heroPage.addActive();
-        let result = await driver.compareScreen("add_active_items", 5, 0.01);
+        let result = await driver.compareScreen("add_active_items", 5);
 
         await heroPage.addInactive();
-        result = await driver.compareScreen("add_inactive_items", 5, 0.01) && result;
+        result = await driver.compareScreen("add_inactive_items", 5) && result;
 
         await heroPage.remove();
-        result = await driver.compareScreen("add_remove_items", 5, 0.01) && result;
+        result = await driver.compareScreen("add_remove_items", 5) && result;
 
         await heroPage.reset();
-        result = await driver.compareScreen("add_reset_items", 5, 0.01) && result;
+        result = await driver.compareScreen("add_reset_items", 5) && result;
 
         assert.isTrue(result, "Image verification failed!");
 
